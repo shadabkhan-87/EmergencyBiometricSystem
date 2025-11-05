@@ -1,0 +1,208 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>User details</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:Arial,sans-serif;padding:20px}
+    table{border-collapse:collapse;width:100%;max-width:600px}
+    td,th{border:1px solid #ddd;padding:8px}
+    img{max-width:200px;height:auto}
+    #notif {
+      position: fixed;
+      right: 20px;
+      top: 20px;
+      background: #222;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 1000;
+    }
+    #notif.match { background: #0a8; color: #003; font-weight: bold; }
+    #adminControls { margin-top: 12px; }
+    #editBtn { display: none; padding:6px 10px; border-radius:6px; border:1px solid #666; background:#fff; cursor:pointer; }
+    #inlineEditor { display:none; margin-top:12px; padding:12px; border-radius:8px; background:#f9f9f9; box-shadow:0 2px 8px rgba(0,0,0,0.06); max-width:600px;}
+    #inlineEditor input[type=text]{width:100%;padding:8px;margin-bottom:8px;box-sizing:border-box}
+    #inlineEditor button{padding:6px 10px}
+  </style>
+</head>
+<body>
+  <h1 id="title">User</h1>
+
+  <div id="photoArea">
+    <img id="photo" src="" alt="user photo"><br>
+  </div>
+
+  <div id="adminControls">
+    <button id="editBtn">Edit (admin)</button>
+  </div>
+
+  <div id="inlineEditor">
+    <h3>Edit user (admin)</h3>
+    <label>Name<input id="e_name" type="text"></label>
+    <label>Nationality<input id="e_nationality" type="text"></label>
+    <label>Medical record<input id="e_medical" type="text"></label>
+    <label>Emergency<input id="e_emergency" type="text"></label>
+    <div style="margin-top:8px">
+      <input id="fileInput" type="file" accept="image/*">
+      <button id="saveBtn">Save</button>
+      <button id="cancelBtn">Cancel</button>
+    </div>
+    <div id="editorMsg" style="margin-top:8px;color:#333"></div>
+  </div>
+
+  <h2>Details</h2>
+  <table>
+    <tr><th>Nationality</th><td id="nationality"></td></tr>
+    <tr><th>Medical record</th><td id="medical"></td></tr>
+    <tr><th>Emergency number</th><td id="emergency"></td></tr>
+  </table>
+
+  <div id="notif"></div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get('id') || (window.location.pathname.split('/').pop());
+
+// Load user data and show it
+async function loadUser() {
+  try {
+    const res = await fetch('/api/user/' + id);
+    if (!res.ok) { document.body.innerHTML = '<h2>User not found</h2>'; return; }
+    const u = await res.json();
+    document.getElementById('title').innerText = u.name + ' (ID ' + u.id + ')';
+    document.getElementById('nationality').innerText = u.nationality;
+    document.getElementById('medical').innerText = u.medical;
+    document.getElementById('emergency').innerText = u.emergency;
+    document.getElementById('photo').src = u.photo ? u.photo + '?t=' + Date.now() : '/uploads/default.jpg';
+    // If inline editor visible, keep its fields updated
+    if (document.getElementById('inlineEditor').style.display === 'block') {
+      document.getElementById('e_name').value = u.name || '';
+      document.getElementById('e_nationality').value = u.nationality || '';
+      document.getElementById('e_medical').value = u.medical || '';
+      document.getElementById('e_emergency').value = u.emergency || '';
+    }
+  } catch (e) {
+    console.error('loadUser', e);
+  }
+}
+loadUser();
+
+let notifTimer = null;
+function showNotification(text, highlight = false) {
+  const n = document.getElementById('notif');
+  n.className = highlight ? 'match' : '';
+  n.innerText = text;
+  n.style.display = 'block';
+  if (notifTimer) clearTimeout(notifTimer);
+  notifTimer = setTimeout(() => { n.style.display = 'none'; notifTimer = null; }, highlight ? 4000 : 2200);
+}
+
+// WebSocket
+function connectWS() {
+  const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
+  const ws = new WebSocket(`${proto}://${window.location.host}`);
+  ws.onopen = () => console.log('WS connected');
+  ws.onclose = () => { console.log('WS closed — retrying in 2s'); setTimeout(connectWS, 2000); };
+  ws.onerror = (e) => console.error('WS error', e);
+  ws.onmessage = (ev) => {
+    try {
+      const msg = JSON.parse(ev.data);
+      if (msg.type === 'matched') {
+        showNotification(`Fingerprint matched: ID ${msg.id}`);
+        if (String(msg.id) === String(id)) {
+          loadUser();
+          showNotification(`This page matched (ID ${msg.id})`, true);
+        }
+      } else if (msg.type === 'log') {
+        console.log('LOG:', msg.message);
+      }
+    } catch (e) { console.error('WS parse', e); }
+  };
+}
+connectWS();
+
+// Check admin status and show Edit button if admin logged in
+async function checkAdmin() {
+  try {
+    const res = await fetch('/api/admin/status');
+    if (res.ok) {
+      const j = await res.json();
+      if (j && j.ok) {
+        const editBtn = document.getElementById('editBtn');
+        editBtn.style.display = 'inline-block';
+        editBtn.addEventListener('click', () => {
+          toggleEditor(true);
+        });
+      }
+    }
+  } catch (e) { console.error('checkAdmin', e); }
+}
+checkAdmin();
+
+function toggleEditor(show) {
+  const ed = document.getElementById('inlineEditor');
+  if (show) {
+    ed.style.display = 'block';
+    // preload fields
+    (async () => {
+      const res = await fetch('/api/user/' + id);
+      if (!res.ok) return;
+      const u = await res.json();
+      document.getElementById('e_name').value = u.name || '';
+      document.getElementById('e_nationality').value = u.nationality || '';
+      document.getElementById('e_medical').value = u.medical || '';
+      document.getElementById('e_emergency').value = u.emergency || '';
+    })();
+  } else {
+    ed.style.display = 'none';
+  }
+}
+
+document.getElementById('cancelBtn').addEventListener('click', () => toggleEditor(false));
+
+document.getElementById('saveBtn').addEventListener('click', async () => {
+  const idVal = id;
+  const payload = {
+    name: document.getElementById('e_name').value,
+    nationality: document.getElementById('e_nationality').value,
+    medical: document.getElementById('e_medical').value,
+    emergency: document.getElementById('e_emergency').value
+  };
+  // PUT to protected endpoint (requires admin session cookie)
+  const res = await fetch('/api/user/' + idVal, {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const msgEl = document.getElementById('editorMsg');
+  if (res.ok) {
+    msgEl.innerText = 'Saved details.';
+    // if file selected, upload photo too
+    const fileInput = document.getElementById('fileInput');
+    if (fileInput.files && fileInput.files[0]) {
+      const fd = new FormData();
+      fd.append('photo', fileInput.files[0]);
+      const up = await fetch('/api/user/' + idVal + '/photo', { method: 'POST', body: fd });
+      if (up.ok) {
+        const j = await up.json();
+        document.getElementById('photo').src = j.photo + '?t=' + Date.now();
+        msgEl.innerText += ' Photo uploaded.';
+      } else {
+        msgEl.innerText += ' Photo upload failed.';
+      }
+    }
+    // refresh data
+    loadUser();
+    setTimeout(() => { msgEl.innerText = ''; toggleEditor(false); }, 1200);
+  } else {
+    const j = await res.json().catch(()=>({}));
+    msgEl.innerText = 'Save failed: ' + (j && j.error ? j.error : res.statusText);
+  }
+});
+</script>
+</body>
+</html>

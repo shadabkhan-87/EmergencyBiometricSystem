@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "achin",
+    "photo": "/uploads/user_1.jpg",
+    "nationality": "India",
+    "medical": "fever",
+    "emergency": "+91-99999-00001"
+  },
+  {
+    "id": 2,
+    "name": "ganguly",
+    "photo": "/uploads/user_2.jpg",
+    "nationality": "USA",
+    "medical": "Diabetic",
+    "emergency": "+1-555-0002"
+  },
+  {
+    "id": 3,
+    "name": "sehwag",
+    "photo": "/uploads/user_3.jpg",
+    "nationality": "UK",
+    "medical": "Allergic to penicillin",
+    "emergency": "+44-20-0003"
+  },
+  {
+    "id": 4,
+    "name": "virat",
+    "photo": "/uploads/user_4.jpg",
+    "nationality": "Australia",
+    "medical": "Asthma",
+    "emergency": "+61-3-0004"
+  },
+  {
+    "id": 5,
+    "name": "modi",
+    "photo": "/uploads/user_5.jpg",
+    "nationality": "Canada",
+    "medical": "None",
+    "emergency": "+1-555-0005"
+  }
+]
