@@ -6,6 +6,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    /* === EXTRA MODERN EFFECTS === */
+
+/* Animated background gradient */
+body {
+  background: linear-gradient(-45deg, #141e30, #243b55, #0f2027, #2c5364);
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating glow particles */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, transparent 40%),
+              radial-gradient(circle at 80% 60%, rgba(255,255,255,0.08) 0%, transparent 40%);
+  background-size: 200% 200%;
+  animation: floatParticles 10s infinite alternate ease-in-out;
+  z-index: 0;
+}
+@keyframes floatParticles {
+  0% { background-position: 0% 50%; opacity: 0.4; }
+  100% { background-position: 100% 50%; opacity: 0.8; }
+}
+
+/* Card reflection & tilt */
+#loginBox {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+#loginBox:hover {
+  transform: rotateY(8deg) rotateX(4deg);
+  box-shadow: 0 0 35px rgba(0, 200, 255, 0.4);
+}
+
+/* Button neon border */
+#loginBtn, button {
+  position: relative;
+  overflow: hidden;
+}
+#loginBtn::before, button::before {
+  content: "";
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  background: linear-gradient(90deg, #00e6ff, #0072ff, #00e6ff);
+  z-index: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+#loginBtn:hover::before, button:hover::before {
+  opacity: 1;
+  animation: neonMove 2s linear infinite;
+}
+@keyframes neonMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* Login fade-in */
+#loginBox {
+  animation: fadeSlideIn 1s ease forwards;
+}
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Text glow on title */
+h1 {
+  text-shadow: 0 0 12px rgba(0,255,255,0.4), 0 0 24px rgba(0,255,255,0.2);
+}
     /* === GLOBAL === */
     * {
       box-sizing: border-box;
@@ -191,6 +269,8 @@
   </style>
 </head>
 <body>
+  <canvas id="bgCanvas"></canvas>
+
   <h1>Fingerprint Server — Admin</h1>
 
   <!-- MODERN LOGIN BOX -->
