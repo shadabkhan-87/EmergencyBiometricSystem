@@ -9,34 +9,34 @@
   },
   {
     "id": 2,
-    "name": "hamed raza",
+    "name": "Sai kumar",
     "photo": "/uploads/user_2.jpeg",
-    "nationality": "USA",
-    "medical": "Diabetic",
-    "emergency": "+1-555-0002"
+    "nationality": "India",
+    "medical": "Allergy from penicillin",
+    "emergency": "8050902457"
   },
   {
     "id": 3,
-    "name": "sehwag",
+    "name": "Cristiano Ronaldo",
     "photo": "/uploads/user_3.jpg",
-    "nationality": "UK",
-    "medical": "Allergic to penicillin",
-    "emergency": "+44-20-0003"
+    "nationality": "Portuguese",
+    "medical": "tachycardia(at age 15) \"racing heart,\"",
+    "emergency": "1234567890"
   },
   {
     "id": 4,
-    "name": "imran",
-    "photo": "/uploads/user_4.png",
-    "nationality": "Australia",
-    "medical": "Asthma",
-    "emergency": "+61-3-0004"
+    "name": "NEHA GADA",
+    "photo": "/uploads/user_4.jpg",
+    "nationality": "Indian",
+    "medical": "allergy from Phenylephrine",
+    "emergency": "8123307969"
   },
   {
     "id": 5,
-    "name": "modi",
+    "name": "kaveri",
     "photo": "/uploads/user_5.jpg",
-    "nationality": "Canada",
-    "medical": "None",
-    "emergency": "+1-555-0005"
+    "nationality": " indian",
+    "medical": "allergy from anti biotic",
+    "emergency": "1255544245"
   }
 ]

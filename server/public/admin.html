@@ -93,12 +93,12 @@ h1 {
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #141e30, #243b55);
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
+      padding: 20px;
       color: #fff;
     }
     h1 {
@@ -109,19 +109,19 @@ h1 {
       text-shadow: 0 0 10px rgba(255,255,255,0.2);
     }
 
-    /* === MODERN LOGIN CARD === */
-    #loginBox {
-      width: 360px;
+    /* === MODERN LOGIN/SIGNUP CARD === */
+    #authBox {
+      width: 400px;
+      max-width: 95%;
       background: rgba(255,255,255,0.1);
       border-radius: 20px;
       backdrop-filter: blur(12px);
       box-shadow: 0 0 25px rgba(0,0,0,0.5);
       padding: 40px 30px;
-      display: none;
       animation: fadeIn 1s ease forwards;
     }
 
-    #loginBox h3 {
+    #authBox h3 {
       text-align: center;
       font-size: 22px;
       margin-bottom: 28px;
@@ -167,7 +167,7 @@ h1 {
       border-radius: 4px;
     }
 
-    #loginBtn {
+    .auth-btn {
       width: 100%;
       padding: 12px;
       background: linear-gradient(90deg, #00c6ff, #0072ff);
@@ -180,18 +180,54 @@ h1 {
       letter-spacing: 1px;
       transition: 0.3s ease;
       box-shadow: 0 0 10px rgba(0,114,255,0.4);
+      margin-bottom: 12px;
     }
 
-    #loginBtn:hover {
+    .auth-btn:hover {
       box-shadow: 0 0 20px rgba(0,114,255,0.8);
       transform: scale(1.02);
     }
 
-    #loginMsg {
+    .secondary-btn {
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      box-shadow: 0 0 10px rgba(118,75,162,0.4);
+    }
+
+    .secondary-btn:hover {
+      box-shadow: 0 0 20px rgba(118,75,162,0.8);
+    }
+
+    .toggle-link {
+      text-align: center;
+      margin-top: 16px;
+      color: #ccc;
+      font-size: 14px;
+    }
+
+    .toggle-link a {
+      color: #00e6ff;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .toggle-link a:hover {
+      text-decoration: underline;
+    }
+
+    #authMsg {
       margin-top: 12px;
       text-align: center;
       font-size: 14px;
       color: #ff6b6b;
+    }
+
+    .success-msg {
+      color: #51cf66 !important;
+    }
+
+    .hidden {
+      display: none;
     }
 
     /* === MAIN UI (same as before) === */
@@ -202,7 +238,7 @@ h1 {
       color: #000;
       background: #f7f7f7;
       overflow: auto;
-      height: 100vh;
+      min-height: 100vh;
     }
 
     #container {
@@ -273,15 +309,63 @@ h1 {
 
   <h1>Fingerprint Server — Admin</h1>
 
-  <!-- MODERN LOGIN BOX -->
-  <div id="loginBox">
-    <h3>Welcome Back 👋</h3>
-    <div class="input-group">
-      <input id="pw" type="password" required placeholder=" ">
-      <label for="pw">Admin Password</label>
+  <!-- AUTH BOX (LOGIN & SIGNUP) -->
+  <div id="authBox">
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+      <h3>Welcome Back 👋</h3>
+      <div class="input-group">
+        <input id="loginUsername" type="text" required placeholder=" " autocomplete="username">
+        <label for="loginUsername">Username</label>
+      </div>
+      <div class="input-group">
+        <input id="loginPassword" type="password" required placeholder=" " autocomplete="current-password">
+        <label for="loginPassword">Password</label>
+      </div>
+      <button class="auth-btn" id="loginBtn">Login</button>
+      <div class="toggle-link">
+        Don't have an account? <a id="showSignupBtn">Sign up</a>
+      </div>
+      <div id="authMsg"></div>
     </div>
-    <button id="loginBtn">Login</button>
-    <div id="loginMsg"></div>
+
+    <!-- SIGNUP FORM -->
+    <div id="signupForm" class="hidden">
+      <h3>Create Account 🚀</h3>
+      <div class="input-group">
+        <input id="signupFirstName" type="text" required placeholder=" ">
+        <label for="signupFirstName">First Name</label>
+      </div>
+      <div class="input-group">
+        <input id="signupLastName" type="text" required placeholder=" ">
+        <label for="signupLastName">Last Name</label>
+      </div>
+      <div class="input-group">
+        <input id="signupPhone" type="text" required placeholder=" ">
+        <label for="signupPhone">Phone Number</label>
+      </div>
+      <div class="input-group">
+        <input id="signupEmail" type="email" required placeholder=" ">
+        <label for="signupEmail">Email</label>
+      </div>
+      <div class="input-group">
+        <input id="signupUsername" type="text" required placeholder=" ">
+        <label for="signupUsername">Username</label>
+      </div>
+      <div class="input-group">
+        <input id="signupPassword" type="password" required placeholder=" ">
+        <label for="signupPassword">Password</label>
+      </div>
+      <div class="input-group">
+        <input id="signupConfirmPassword" type="password" required placeholder=" ">
+        <label for="signupConfirmPassword">Confirm Password</label>
+      </div>
+      <button class="auth-btn secondary-btn" id="signupBtn">Sign Up</button>
+      <div class="toggle-link">
+        Already have an account? <a id="showLoginBtn">Login</a>
+      </div>
+      <div id="authMsg"></div>
+    </div>
   </div>
 
   <!-- MAIN UI (unchanged functional part) -->
@@ -331,13 +415,32 @@ h1 {
     </div>
   </div>
 
-  <!-- JAVASCRIPT (same as before) -->
+  <!-- JAVASCRIPT -->
   <script>
-const loginBox = document.getElementById('loginBox');
-const mainUI = document.getElementById('mainUI');
+// Auth elements
+const authBox = document.getElementById('authBox');
+const loginForm = document.getElementById('loginForm');
+const signupForm = document.getElementById('signupForm');
+const showSignupBtn = document.getElementById('showSignupBtn');
+const showLoginBtn = document.getElementById('showLoginBtn');
 const loginBtn = document.getElementById('loginBtn');
-const pw = document.getElementById('pw');
-const loginMsg = document.getElementById('loginMsg');
+const signupBtn = document.getElementById('signupBtn');
+
+// Login inputs
+const loginUsername = document.getElementById('loginUsername');
+const loginPassword = document.getElementById('loginPassword');
+
+// Signup inputs
+const signupFirstName = document.getElementById('signupFirstName');
+const signupLastName = document.getElementById('signupLastName');
+const signupPhone = document.getElementById('signupPhone');
+const signupEmail = document.getElementById('signupEmail');
+const signupUsername = document.getElementById('signupUsername');
+const signupPassword = document.getElementById('signupPassword');
+const signupConfirmPassword = document.getElementById('signupConfirmPassword');
+
+// Main UI elements
+const mainUI = document.getElementById('mainUI');
 const logoutBtn = document.getElementById('logoutBtn');
 const logList = document.getElementById('logList');
 const clientList = document.getElementById('clientList');
@@ -355,6 +458,36 @@ const uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
 const previewPhoto = document.getElementById('previewPhoto');
 const openUserInlineBtn = document.getElementById('openUserInlineBtn');
 
+// Toggle between login and signup
+showSignupBtn.addEventListener('click', () => {
+  loginForm.classList.add('hidden');
+  signupForm.classList.remove('hidden');
+  clearAuthMsg();
+});
+
+showLoginBtn.addEventListener('click', () => {
+  signupForm.classList.add('hidden');
+  loginForm.classList.remove('hidden');
+  clearAuthMsg();
+});
+
+function clearAuthMsg() {
+  const msgs = document.querySelectorAll('#authMsg');
+  msgs.forEach(m => m.innerText = '');
+}
+
+function showAuthMsg(message, isSuccess = false) {
+  const msgs = document.querySelectorAll('#authMsg');
+  msgs.forEach(m => {
+    m.innerText = message;
+    if (isSuccess) {
+      m.classList.add('success-msg');
+    } else {
+      m.classList.remove('success-msg');
+    }
+  });
+}
+
 function addLog(text) {
   const el = document.createElement('div');
   el.className = 'logline';
@@ -363,29 +496,125 @@ function addLog(text) {
   while (logList.children.length > 400) logList.removeChild(logList.lastChild);
 }
 
-async function showLogin() {
-  loginBox.style.display = 'block';
-  mainUI.style.display = 'none';
+// Check if already logged in
+async function checkAuth() {
   const st = await fetch('/api/admin/status').then(r=>r.json()).catch(()=>({ok:false}));
   if (st.ok) {
-    loginBox.style.display='none'; mainUI.style.display='block'; initWS(); loadUserIntoForm();
+    authBox.style.display='none';
+    mainUI.style.display='block';
+    initWS();
+    loadUserIntoForm();
   }
 }
+
+// LOGIN
 loginBtn.addEventListener('click', async () => {
-  const password = pw.value || '';
-  loginMsg.innerText = '';
-  const res = await fetch('/api/login', { method: 'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ password }) });
-  if (res.ok) {
-    loginBox.style.display='none'; mainUI.style.display='block'; initWS(); loadUserIntoForm();
-  } else {
-    loginMsg.innerText = 'Invalid password';
+  const username = loginUsername.value.trim();
+  const password = loginPassword.value;
+  
+  if (!username || !password) {
+    showAuthMsg('Please enter username and password');
+    return;
+  }
+
+  clearAuthMsg();
+  
+  try {
+    const res = await fetch('/api/postapi', {
+      method: 'POST',
+      headers: {'content-type': 'application/json'},
+      body: JSON.stringify({ username, password })
+    });
+    
+    const data = await res.json();
+    
+    if (res.ok && data.ok) {
+      authBox.style.display='none';
+      mainUI.style.display='block';
+      initWS();
+      loadUserIntoForm();
+    } else {
+      showAuthMsg(data.message || 'Login failed');
+    }
+  } catch (err) {
+    showAuthMsg('Connection error');
   }
 });
-logoutBtn.addEventListener('click', async () => {
-  await fetch('/api/logout', { method: 'POST' });
-  loginBox.style.display='block'; mainUI.style.display='none';
+
+// SIGNUP
+signupBtn.addEventListener('click', async () => {
+  const firstName = signupFirstName.value.trim();
+  const lastName = signupLastName.value.trim();
+  const phone = signupPhone.value.trim();
+  const email = signupEmail.value.trim();
+  const username = signupUsername.value.trim();
+  const password = signupPassword.value;
+  const confirmPassword = signupConfirmPassword.value;
+
+  // Validation
+  if (!firstName || !lastName || !phone || !email || !username || !password || !confirmPassword) {
+    showAuthMsg('All fields are required');
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    showAuthMsg('Passwords do not match');
+    return;
+  }
+
+  clearAuthMsg();
+
+  try {
+    const res = await fetch('/api/signup', {
+      method: 'POST',
+      headers: {'content-type': 'application/json'},
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        phone,
+        email,
+        username,
+        password
+      })
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.ok) {
+      showAuthMsg(data.message || 'Admin created successfully', true);
+      // Clear form
+      signupFirstName.value = '';
+      signupLastName.value = '';
+      signupPhone.value = '';
+      signupEmail.value = '';
+      signupUsername.value = '';
+      signupPassword.value = '';
+      signupConfirmPassword.value = '';
+      
+      // Switch to login after 2 seconds
+      setTimeout(() => {
+        signupForm.classList.add('hidden');
+        loginForm.classList.remove('hidden');
+        clearAuthMsg();
+      }, 2000);
+    } else {
+      showAuthMsg(data.message || 'Signup failed');
+    }
+  } catch (err) {
+    showAuthMsg('Connection error');
+  }
 });
 
+// LOGOUT
+logoutBtn.addEventListener('click', async () => {
+  await fetch('/api/logout', { method: 'POST' });
+  authBox.style.display='block';
+  mainUI.style.display='none';
+  loginForm.classList.remove('hidden');
+  signupForm.classList.add('hidden');
+});
+
+// WebSocket
 let ws;
 function initWS() {
   const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
@@ -400,6 +629,7 @@ function initWS() {
     } catch (e) { addLog('WS bad message'); }
   };
 }
+
 function handleMsg(msg) {
   if (!msg || !msg.type) return;
   if (msg.type === 'log') addLog('SERIAL: ' + msg.message);
@@ -409,6 +639,7 @@ function handleMsg(msg) {
   else if (msg.type === 'clients') updateClients(msg.clients || []);
   else if (msg.type === 'serial') addLog('Serial: ' + (msg.message||msg.state||''));
 }
+
 function updateClients(list) {
   clientList.innerHTML = '';
   if (!list.length) { clientList.innerHTML = '<div style="padding:8px;color:#777">No clients</div>'; return; }
@@ -419,14 +650,21 @@ function updateClients(list) {
     clientList.appendChild(d);
   });
 }
+
 function openUser(id) {
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.send(JSON.stringify({ type: 'open', id }));
     addLog('Requested open for ' + id);
   } else addLog('WS not connected');
 }
-openBtn.addEventListener('click', () => { const id = parseInt(openId.value); if (!id) return alert('Enter user id'); openUser(id); });
 
+openBtn.addEventListener('click', () => {
+  const id = parseInt(openId.value);
+  if (!id) return alert('Enter user id');
+  openUser(id);
+});
+
+// User editing functions
 async function loadUserIntoForm() {
   const id = parseInt(editId.value) || 1;
   const res = await fetch('/api/user/' + id);
@@ -438,7 +676,9 @@ async function loadUserIntoForm() {
   editEmergency.value = u.emergency || '';
   previewPhoto.src = u.photo ? u.photo : '/uploads/default.jpg';
 }
+
 editId.addEventListener('change', loadUserIntoForm);
+
 saveBtn.addEventListener('click', async () => {
   const id = parseInt(editId.value);
   const payload = {
@@ -447,27 +687,48 @@ saveBtn.addEventListener('click', async () => {
     medical: editMedical.value,
     emergency: editEmergency.value
   };
-  const res = await fetch('/api/user/' + id, { method: 'PUT', headers: {'content-type':'application/json'}, body: JSON.stringify(payload) });
-  if (res.ok) { editMsg.innerText = 'Saved'; loadUserIntoForm(); } else { editMsg.innerText = 'Save failed'; }
+  const res = await fetch('/api/user/' + id, {
+    method: 'PUT',
+    headers: {'content-type':'application/json'},
+    body: JSON.stringify(payload)
+  });
+  if (res.ok) {
+    editMsg.innerText = 'Saved';
+    loadUserIntoForm();
+  } else {
+    editMsg.innerText = 'Save failed';
+  }
 });
+
 uploadPhotoBtn.addEventListener('click', async () => {
   const id = parseInt(editId.value);
-  if (!photoFile.files || !photoFile.files[0]) { alert('Select file'); return; }
+  if (!photoFile.files || !photoFile.files[0]) {
+    alert('Select file');
+    return;
+  }
   const fd = new FormData();
   fd.append('photo', photoFile.files[0]);
-  const res = await fetch('/api/user/' + id + '/photo', { method: 'POST', body: fd });
+  const res = await fetch('/api/user/' + id + '/photo', {
+    method: 'POST',
+    body: fd
+  });
   if (res.ok) {
     const j = await res.json();
     previewPhoto.src = j.photo + '?t=' + Date.now();
     editMsg.innerText = 'Photo uploaded';
-  } else editMsg.innerText = 'Upload failed';
+  } else {
+    editMsg.innerText = 'Upload failed';
+  }
 });
+
 openUserInlineBtn.addEventListener('click', () => {
   const id = parseInt(editId.value);
   if (!id) return alert('Enter id');
   window.open(`/user.html?id=${encodeURIComponent(id)}`, '_blank');
 });
-showLogin();
+
+// Initialize
+checkAuth();
   </script>
 </body>
 </html>
