@@ -1,12 +1,24 @@
 [
   {
-    "id": 1763210381602,
+    "id": 1763285181607,
     "firstName": "shadab",
     "lastName": "khan",
-    "phone": "90144712710",
-    "email": "shadabkhan712710@gmail,com",
+    "role": "Admin",
+    "phone": "9014712710",
+    "email": "shadabkhan@gmail.com",
     "username": "Shadab khan",
     "password": "Shadab@khan",
-    "createdAt": "2025-11-15T12:39:41.602Z"
+    "createdAt": "2025-11-16T09:26:21.607Z"
+  },
+  {
+    "id": 1763286807706,
+    "firstName": "shabaz",
+    "lastName": "khan",
+    "role": "Admin",
+    "phone": "12",
+    "email": "ghgh",
+    "username": "shahbaz",
+    "password": "Shahbaz@",
+    "createdAt": "2025-11-16T09:53:27.706Z"
   }
 ]
