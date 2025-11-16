@@ -86,7 +86,7 @@ void loop()
     digitalWrite(relay1, LOW);
     digitalWrite(relay2, LOW);
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 10; i++)
     {
       lcd.clear();
       lcd.print("Place Finger");

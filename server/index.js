@@ -212,6 +212,14 @@ app.post('/api/postapi', async (req, res) => {
       message: 'Invalid password'
     });
   }
+  
+   // Check admin
+  if (admin.role !== 'Admin') {
+    return res.status(401).json({
+      ok: false,
+      message: 'unauthorized user'
+    });
+  }
 
   // Create session
   try {
@@ -270,6 +278,7 @@ app.post('/api/signup', async (req, res) => {
     id: Date.now(), // Simple ID generation
     firstName: firstName.trim(),
     lastName: lastName.trim(),
+    role: 'user',
     phone: phone.trim(),
     email: email.trim(),
     username: username.trim(),
